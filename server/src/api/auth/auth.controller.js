@@ -1,55 +1,35 @@
-const FirebaseAuthError = require("../../utils/firebase-auth-error");
-const { registerSchema, loginSchema } = require("./auth.model");
+const loginSchema = require("./auth.model");
 const authService = require("./auth.service");
 
-// const register = async (req, res) => {
-//   const { error } = registerSchema.validate(req.body);
-//   if (error)
-//     return res
-//       .status(400)
-//       .send({ error: true, message: error.details[0].message });
-
-//   try {
-//     await authService.registerUser(
-//       req.body.email,
-//       req.body.password,
-//       req.body.name
-//     );
-//     res.status(201).json({ error: false, message: "User Created" });
-//   } catch (error) {
-//     res.status(400).json({ error: true, message: error.message });
-//   }
-// };
-
 const login = async (req, res) => {
-  const { error } = loginSchema.validate(req.body);
-  if (error)
+  const validation = loginSchema.validate(req.body);
+  if (validation.error) {
     return res
       .status(400)
-      .send({ error: true, message: error.details[0].message });
+      .send({ error: true, message: validation.error.details[0].message });
+  }
 
   try {
     const userResponse = await authService.loginUser(
+      req.body.nama,
+      req.body.nim,
+      req.body.NIK,
       req.body.email,
-      req.body.password,
-      req.body.name
+      req.body.gender,
+      req.body.tempat_lahir,
+      req.body.tanggal_lahir,
+      req.body.angkatan
     );
+
     res.status(200).json({
       error: false,
       message: "success",
       loginResult: userResponse,
     });
   } catch (error) {
-    console.log(error.message);
-
-    if (error.message) {
-      const firebaseError = new FirebaseAuthError(error.message);
-      return res.status(firebaseError.statusCode).json(firebaseError.toJSON());
-    }
+    console.error(error.message);
+    res.status(500).json({ error: true, message: error.message });
   }
 };
 
-module.exports = {
-  register,
-  login,
-};
+module.exports = login;

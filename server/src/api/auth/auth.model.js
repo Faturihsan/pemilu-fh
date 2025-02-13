@@ -1,19 +1,17 @@
 const Joi = require('joi');
 
-// const registerSchema = Joi.object({
-//   name: Joi.string().required(),
-//   email: Joi.string().email().required(),
-//   password: Joi.string().min(8).required(),
-// });
 
 const loginSchema = Joi.object({
+  nama: Joi.string().required(),
+  nim: Joi.string().required(),
+  NIK: Joi.number().required(),
   email: Joi.string().email().required(),
-  password: Joi.string().required(),
+  gender: Joi.string().required(),
+  tempat_lahir: Joi.string().required(),
+  tanggal_lahir: Joi.date().required(),
+  angkatan: Joi.number().required(),
 });
 
-module.exports = {
-  registerSchema,
-  loginSchema,
-};
+module.exports = loginSchema;
 
 
